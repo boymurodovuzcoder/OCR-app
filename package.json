@@ -18,7 +18,8 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
-    "quasar": "^1.0.0"
+    "quasar": "^1.0.0",
+    "vue-top-progress": "^0.7.0"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",

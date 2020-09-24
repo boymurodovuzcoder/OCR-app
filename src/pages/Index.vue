@@ -25,10 +25,15 @@
       </div>
     </transition>
     <transition name="slide-fade">
-      <div v-if="result" class="form-group" style="margin-top: 1rem;">
+    <div v-if="result">
+      <div class="form-group" >
+        <img :src="imageUrl" class="rounded">
+      </div>
+      <div class="form-group" style="margin-top: 1rem;">
         <label for="exampleFormControlTextarea1">Extraxted Text: </label>
         <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" v-model="result"></textarea>
       </div>
+    </div>
     </transition>
     <button type="button" class="btn btn-outline-secondary" id="submit" @click="onConvert">convert</button>
   </div>
@@ -47,7 +52,8 @@ export default {
       inputValidation: false,
       loading: false,
       url: null,
-      result: null
+      result: null,
+      imageUrl: null
     }
   },
   methods: {
@@ -56,6 +62,7 @@ export default {
       var file = document.getElementById('file').files[0]
       self.loading = true
       self.result = null
+      self.imageUrl = null
       var form = new FormData()
       form.append('language', 'eng')
       form.append('scale', 'true')
@@ -71,6 +78,8 @@ export default {
         self.postRequest(form)
         self.ErrorMessage = false
         self.inputValidation = false
+        //  assigning image url
+        self.imageUrl = self.url
       } else if (file) {
         var reader = new FileReader()
         reader.readAsDataURL(file)
@@ -78,6 +87,8 @@ export default {
           self.ErrorMessage = false
           self.inputValidation = false
           this.fileBase64 = reader.result
+          //  assigning image url
+          self.imageUrl = URL.createObjectURL(file)
           form.append('base64Image', this.fileBase64)
           self.postRequest(form)
         }
@@ -97,7 +108,7 @@ export default {
           self.loading = false
           if (res.data.ErrorMessage) {
             var errMsg = []
-            res.data.ErrorMessage.forEach(ms => errMsg.push(ms))
+            res.data.ErrorMessage.forEach(ms => errMsg.push(ms + '. '))
             self.ErrorMessage = errMsg.join('')
           } else {
             self.result = res.data.ParsedResults[0].ParsedText
@@ -112,9 +123,15 @@ export default {
 
 <style scoped>
 .container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   background-color: #b6d3f9 !important;
   border-radius: 8px;
   padding: 1rem 1rem;
+}
+img {
+  width: 100%;
+  position: relative;
 }
 label {
   font-weight: 500;
@@ -123,6 +140,7 @@ label {
   background-color: #c6d9f2;
   margin-left: 0.5rem;
   border-radius: 8px;
+  margin-right: 0.5rem;
 }
 .slide-fade-enter-active {
   transition: all .3s ease;
